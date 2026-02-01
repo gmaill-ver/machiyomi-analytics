@@ -4,7 +4,6 @@ Google Sheets API Client
 """
 
 import gspread
-from gspread_formatting import *
 import pandas as pd
 from datetime import datetime
 import config
@@ -90,13 +89,6 @@ class SheetsClient:
             data.append([f'{i}. {article["title"]}', f'{article["pv"]} PV'])
 
         worksheet.update('A1', data)
-
-        # ヘッダーのフォーマット設定
-        fmt = cellFormat(
-            textFormat=textFormat(bold=True, fontSize=14)
-        )
-        format_cell_range(worksheet, 'A1', fmt)
-
         return worksheet
 
     def write_daily_pv(self, df):
@@ -108,15 +100,6 @@ class SheetsClient:
         df_display.columns = ['日付', 'PV数', 'セッション数', 'ユーザー数', '平均滞在時間(秒)']
 
         worksheet = self._clear_and_write(sheet_name, df_display)
-
-        # ヘッダーのフォーマット
-        if not df.empty:
-            fmt = cellFormat(
-                backgroundColor=color(0.2, 0.4, 0.8),
-                textFormat=textFormat(bold=True, foregroundColor=color(1, 1, 1))
-            )
-            format_cell_range(worksheet, '1:1', fmt)
-
         return worksheet
 
     def write_article_performance(self, df):
@@ -127,14 +110,6 @@ class SheetsClient:
         df_display.columns = ['URL', '記事タイトル', 'PV数', '平均滞在時間(秒)', '直帰率(%)']
 
         worksheet = self._clear_and_write(sheet_name, df_display)
-
-        if not df.empty:
-            fmt = cellFormat(
-                backgroundColor=color(0.2, 0.6, 0.4),
-                textFormat=textFormat(bold=True, foregroundColor=color(1, 1, 1))
-            )
-            format_cell_range(worksheet, '1:1', fmt)
-
         return worksheet
 
     def write_search_queries(self, df):
@@ -145,14 +120,6 @@ class SheetsClient:
         df_display.columns = ['検索クエリ', 'クリック数', '表示回数', 'CTR(%)', '平均順位']
 
         worksheet = self._clear_and_write(sheet_name, df_display)
-
-        if not df.empty:
-            fmt = cellFormat(
-                backgroundColor=color(0.8, 0.4, 0.2),
-                textFormat=textFormat(bold=True, foregroundColor=color(1, 1, 1))
-            )
-            format_cell_range(worksheet, '1:1', fmt)
-
         return worksheet
 
     def write_trends(self, ga_daily, gsc_daily):
@@ -179,11 +146,5 @@ class SheetsClient:
             ]
 
             self._clear_and_write(sheet_name, merged)
-
-            fmt = cellFormat(
-                backgroundColor=color(0.5, 0.2, 0.6),
-                textFormat=textFormat(bold=True, foregroundColor=color(1, 1, 1))
-            )
-            format_cell_range(worksheet, '1:1', fmt)
 
         return worksheet

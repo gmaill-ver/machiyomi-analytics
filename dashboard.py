@@ -14,6 +14,7 @@ import config
 from ga4_client import GA4Client
 from search_console_client import SearchConsoleClient
 from sheets_client import SheetsClient
+from charts import create_charts
 
 
 def build_dashboard(quick_mode=False):
@@ -92,6 +93,12 @@ def build_dashboard(quick_mode=False):
 
         print("[Sheets] トレンド分析シート更新中...")
         sheets.write_trends(daily_pv, gsc_daily)
+
+        print("[Sheets] グラフ作成中...")
+        try:
+            create_charts(config.SPREADSHEET_ID)
+        except Exception as e:
+            print(f"  ⚠️ グラフ作成スキップ: {e}")
 
     print("-" * 50)
     print(f"[{datetime.now()}] ダッシュボード更新完了!")
