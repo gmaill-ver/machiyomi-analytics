@@ -1,0 +1,8 @@
+google-analytics-data==0.18.0
+google-auth==2.27.0
+google-auth-oauthlib==1.2.0
+google-api-python-client==2.114.0
+gspread==6.0.0
+gspread-formatting==1.1.2
+pandas==2.1.4
+python-dateutil==2.8.2
