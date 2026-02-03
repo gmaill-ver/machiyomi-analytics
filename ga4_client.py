@@ -123,3 +123,36 @@ class GA4Client:
             date_range_days=1,
             limit=24
         )
+
+    def get_hourly_stats(self, days=30):
+        """時間帯別アクセス数を取得"""
+        df = self._run_report(
+            dimensions=["hour"],
+            metrics=["screenPageViews", "sessions", "activeUsers"],
+            date_range_days=days,
+            limit=24
+        )
+        if not df.empty:
+            df['hour'] = df['hour'].astype(int)
+            df['screenPageViews'] = df['screenPageViews'].astype(int)
+            df['sessions'] = df['sessions'].astype(int)
+            df['activeUsers'] = df['activeUsers'].astype(int)
+            df = df.sort_values('hour')
+        return df
+
+    def get_dayofweek_stats(self, days=30):
+        """曜日別アクセス数を取得"""
+        df = self._run_report(
+            dimensions=["dayOfWeek"],
+            metrics=["screenPageViews", "sessions", "activeUsers"],
+            date_range_days=days,
+            limit=7
+        )
+        if not df.empty:
+            df['dayOfWeek'] = df['dayOfWeek'].astype(int)
+            df['screenPageViews'] = df['screenPageViews'].astype(int)
+            df['sessions'] = df['sessions'].astype(int)
+            df['activeUsers'] = df['activeUsers'].astype(int)
+            # 曜日順にソート（0=日曜, 1=月曜, ...）
+            df = df.sort_values('dayOfWeek')
+        return df

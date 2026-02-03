@@ -25,5 +25,6 @@ SHEETS = {
     "article_performance": "記事別パフォーマンス",
     "search_queries": "検索クエリ",
     "trends": "トレンド分析",
-    "summary": "サマリー"
+    "summary": "サマリー",
+    "time_analysis": "時間帯分析"
 }

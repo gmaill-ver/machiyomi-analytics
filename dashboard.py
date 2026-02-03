@@ -42,6 +42,14 @@ def build_dashboard(quick_mode=False):
     traffic = ga4.get_traffic_sources(days=config.REPORT_DAYS)
     print(f"  → {len(traffic)}ソース取得完了")
 
+    print("[GA4] 時間帯別データ取得中...")
+    hourly_stats = ga4.get_hourly_stats(days=config.REPORT_DAYS)
+    print(f"  → {len(hourly_stats)}時間帯取得完了")
+
+    print("[GA4] 曜日別データ取得中...")
+    dayofweek_stats = ga4.get_dayofweek_stats(days=config.REPORT_DAYS)
+    print(f"  → {len(dayofweek_stats)}曜日取得完了")
+
     # === Search Console データ取得 ===
     print("[GSC] 検索クエリデータ取得中...")
     queries = gsc.get_search_queries(days=config.REPORT_DAYS)
@@ -93,6 +101,9 @@ def build_dashboard(quick_mode=False):
 
         print("[Sheets] トレンド分析シート更新中...")
         sheets.write_trends(daily_pv, gsc_daily)
+
+        print("[Sheets] 時間帯分析シート更新中...")
+        sheets.write_time_analysis(hourly_stats, dayofweek_stats)
 
         print("[Sheets] グラフ作成中...")
         try:

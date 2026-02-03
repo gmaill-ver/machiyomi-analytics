@@ -148,3 +148,58 @@ class SheetsClient:
             self._clear_and_write(sheet_name, merged)
 
         return worksheet
+
+    def write_time_analysis(self, hourly_df, dayofweek_df):
+        """曜日・時間帯分析シートを更新"""
+        sheet_name = config.SHEETS['time_analysis']
+        worksheet = self._get_or_create_sheet(sheet_name)
+        worksheet.clear()
+
+        data = [
+            ['曜日・時間帯分析'],
+            ['最終更新', datetime.now().strftime('%Y-%m-%d %H:%M:%S')],
+            [''],
+            ['=== 時間帯別アクセス（0-23時） ==='],
+            ['時間', 'PV数', 'セッション数', 'ユーザー数'],
+        ]
+
+        # 時間帯別データ
+        if not hourly_df.empty:
+            for _, row in hourly_df.iterrows():
+                data.append([
+                    f"{int(row['hour'])}時",
+                    int(row['screenPageViews']),
+                    int(row['sessions']),
+                    int(row['activeUsers'])
+                ])
+
+        data.append([''])
+        data.append(['=== 曜日別アクセス ==='])
+        data.append(['曜日', 'PV数', 'セッション数', 'ユーザー数'])
+
+        # 曜日別データ
+        day_names = ['日曜', '月曜', '火曜', '水曜', '木曜', '金曜', '土曜']
+        if not dayofweek_df.empty:
+            for _, row in dayofweek_df.iterrows():
+                day_idx = int(row['dayOfWeek'])
+                data.append([
+                    day_names[day_idx],
+                    int(row['screenPageViews']),
+                    int(row['sessions']),
+                    int(row['activeUsers'])
+                ])
+
+        # ベスト投稿タイミング分析
+        data.append([''])
+        data.append(['=== 投稿タイミング推奨 ==='])
+
+        if not hourly_df.empty:
+            best_hour = hourly_df.loc[hourly_df['screenPageViews'].idxmax()]
+            data.append(['最もアクセスが多い時間帯', f"{int(best_hour['hour'])}時"])
+
+        if not dayofweek_df.empty:
+            best_day = dayofweek_df.loc[dayofweek_df['screenPageViews'].idxmax()]
+            data.append(['最もアクセスが多い曜日', day_names[int(best_day['dayOfWeek'])]])
+
+        worksheet.update('A1', data)
+        return worksheet
